@@ -1,4 +1,9 @@
-# Install GoGUI and GnuGo
+# 搬运一些施工必要材料
+* 安装java
+* 安装GoGui
+* 安装GnuGo
+* 安装MuGo
+* GnuGo常用命令
 
 ## 安装java
 如果ubuntu上已经有java的话可以跳过这一步，没有的话需要去安装一下并配置好环境变量
@@ -43,8 +48,44 @@ gogui
 sudo apt-get install gnugo
 ```
 
-## 在GoGui中导入GnuGo并与(bei)其(ta)对(xue)战(nue)
-在terminal中打开GoGui.
+## 安装MuGo
+MuGo是用python3写成的部分复现AlphaGo的围棋AI，原repo：https://github.com/brilee/MuGo
 
-Program => New Program 之后按照提示做即可
+直接下载release中的版本，直接clone整个repo的话需要重新训练网络，而release中的版本有一个训练好的模型
+
+Ubuntu下默认的python版本是python2，README中的几个指令需要相应地改成pip3：
+```Bash
+pip3 install -r requirements.txt
+```
+同理运行时指定python3 运行
+```Bash
+python3 main.py gtp policy --read-file=saved_models/20170718
+```
+其中 saved_models/20170718 是release版本中训练好的模型参数
+
+## GnuGo常用命令
+### 在GnuGo中导入一个 Go Engine
+在terminal中打开GoGui. Program => New Program 之后按照提示做即可
+
+### 让两个Go AI 在gogui中对局
+以MuGo和GnuGo为例，每个程序需要指定启动命令
+```Bash
+BLACK="gnugo --mode gtp"
+WHITE="python3 main.py gtp policy --read-file=saved_models/20170718"
+TWOGTP="gogui-twogtp -black \"$BLACK\" -white \"$WHITE\""
+gogui -program "$TWOGTP" -computer-both -auto
+```
+
+### 让两个Go AI 对局并分析数据
+同样以MuGo为例，关于-analyze更多可以参考：https://www.mankier.com/1/gogui-twogtp
+
+文档中给出的命令会自动在当前路径下生成.sgf文件，对局多的时候会出现一大堆文件，可以用一个文件夹来保存所有对局数据。在保存数据的路径下运行下面指令即可：
+```Bash
+BLACK="gnugo --mode gtp"
+WHITE="python3 ../main.py gtp policy --read-file=../saved_models/20170718"
+gogui-twogtp -black "$BLACK" -white "$WHITE" -games 10 -size 19 -alternate -sgffile gnuvsmugo -auto
+
+gogui-twogtp -analyze gnuvsmugo.dat
+```
+对局结果可以在.html文件中看到，“B+3.5”指黑棋赢3.5目，“B+R”指黑棋胜，白棋投降
 
