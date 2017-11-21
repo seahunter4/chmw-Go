@@ -3,7 +3,8 @@
 * 安装GoGui
 * 安装GnuGo
 * 安装MuGo
-* GnuGo常用命令
+* GoGui常用命令
+* 在服务器上运行DarkForest
 
 ## 安装java
 如果ubuntu上已经有java的话可以跳过这一步，没有的话需要去安装一下并配置好环境变量
@@ -63,8 +64,8 @@ python3 main.py gtp policy --read-file=saved_models/20170718
 ```
 其中 saved_models/20170718 是release版本中训练好的模型参数
 
-## GnuGo常用命令
-### 在GnuGo中导入一个 Go Engine
+## GoGui常用命令
+### 在GoGui中导入一个 Go Engine
 在terminal中打开GoGui. Program => New Program 之后按照提示做即可
 
 ### 让两个Go AI 在gogui中对局
@@ -89,3 +90,21 @@ gogui-twogtp -analyze gnuvsmugo.dat
 ```
 对局结果可以在.html文件中看到，“B+3.5”指黑棋赢3.5目，“B+R”指黑棋胜，白棋投降
 
+## 在服务器上运行DarkForest
+这一步踩了很多坑，本来试图在虚拟机上安装DF相关依赖，如torch，CUDA等等，都没有成功。查阅网上资料显示在虚拟机里面使用CUDA是非常困难的，无奈只能找助教接了一个服务器账号，在服务器上运行。本次课程提供的服务器已经装好了torch、CUDA等等相关依赖。首先连接服务器后下载DarkForest整个repo:
+```Bash
+git clone https://github.com/facebookresearch/darkforestGo.git
+```
+DarkForest主页上Build部分基本已经完成，只需要执行compile这一步:
+```
+sh ./compile.sh
+```
+Usage部分需要注意Step 2. 我们没有权限访问/data/local/go，需要重新创建一个path来指定后面的pipe file path。比如我在实验室提供的账号下创建了路径: ~/darkforest/data/local/go,则Step 2相对应要改为：
+```Bash
+cd ./local_evaluator
+sh cnn_evaluator.sh 1 ~/darkforest/data/local/go
+```
+最后注意Step 3中要运行主程序的话，主程序内默认的pipe file path = /data/local/go，这里运行时同样需要重新指定:
+```Bash
+th cnnPlayerMCTSV2.lua [other option] --pipe_path ~/darkforest/data/local/go
+```
