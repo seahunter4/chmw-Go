@@ -43,6 +43,15 @@ which java
 gogui
 ```
 
+### 在服务器上安装GoGui
+由于没有服务器的sudo权限，最大区别在于安装脚本和PREFIX上，需要作出一点相应的改动
+
+新建一个local文件夹，具体路径为~/local，然后打开install.sh做两处修改:
+1) 第3行： PREFIX=/usr/local => PREFIX=~/local
+2) 第56行： if [ -f $FILE -a -x $FILE ]; then => if [ -f $FILE -a $FILE ]; then
+
+余下安装与在本地安装是同理
+
 ## 安装GnuGo
 输入以下command直接安装：
 ```Bash
@@ -63,6 +72,26 @@ pip3 install -r requirements.txt
 python3 main.py gtp policy --read-file=saved_models/20170718
 ```
 其中 saved_models/20170718 是release版本中训练好的模型参数
+### 在服务器上安装MuGo
+需要先配置好虚拟环境，助教提供的服务器上没有acaconda，需要用virtualenv，基本步骤如下：
+* 创建一个管理环境的文件夹
+```Bash
+mkdir goenvs
+```
+* 移动到刚创建好的目录下，新建一个虚拟环境
+```Bash
+virtualenv -p /usr/bin/python3 go
+```
+* 激活环境，感觉virtualenv激活环境比conda麻烦多了...必须要到指定的目录下才能激活
+```Bash
+source ~/goenvs/go/bin/activate
+```
+* 安装相关依赖，在激活环境后，直接输入python和pip都是默认python3的
+```Bash
+cd ~/MuGo-1.0
+pip install -r requirements.txt
+```
+
 
 ## GoGui常用命令
 ### 在GoGui中导入一个 Go Engine
