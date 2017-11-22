@@ -5,6 +5,7 @@
 * 安装MuGo
 * GoGui常用命令
 * 在服务器上运行DarkForest
+* DarkForest vs MuGo
 
 ## 安装java
 如果ubuntu上已经有java的话可以跳过这一步，没有的话需要去安装一下并配置好环境变量
@@ -119,6 +120,18 @@ gogui-twogtp -analyze gnuvsmugo.dat
 ```
 对局结果可以在.html文件中看到，“B+3.5”指黑棋赢3.5目，“B+R”指黑棋胜，白棋投降
 
+### Darkforest vs MuGo
+原理与gnugo vs MuGo是一样的，语法逻辑还是指定相应的运行指令, 注意相对应地修改指定的路径即可。注意Darkforest源码指定了运行主程序要在./cnnPlayerV2路径下，不想改代码的话就在这个路径下运行好了。MuGo没有这样的要求
+```Bash
+cd ./cnnPlayerV2
+BLACK="th cnnPlayerMCTSV2.lua --num_gpu 2 --time_limit 10 --pipe_path ../data/local/go"
+WHITE="python ../../MuGo-0.1/main.py gtp policy --read-file=../../MuGo-0.1/saved_models/20170718"
+../../local/bin/gogui-twogtp -black "$BLACK" -white "$WHITE" -games 100 -size 19 -sgffile ./dfvsmugo/dfvsmugo -auto -verbose
+```
+上面的路径可以根据具体情况进行修改
+-auto 让两个AI自动进行对战
+-verbose 将两个AI的gtp输出打印在终端上，DF打印的信息是非常详细的
+
 ## 在服务器上运行DarkForest
 这一步踩了很多坑，本来试图在虚拟机上安装DF相关依赖，如torch，CUDA等等，都没有成功。查阅网上资料显示在虚拟机里面使用CUDA是非常困难的，无奈只能找助教接了一个服务器账号，在服务器上运行。本次课程提供的服务器已经装好了torch、CUDA等等相关依赖。首先连接服务器后下载DarkForest整个repo:
 ```Bash
@@ -137,3 +150,4 @@ sh cnn_evaluator.sh 1 ~/darkforest/data/local/go
 ```Bash
 th cnnPlayerMCTSV2.lua [other option] --pipe_path ~/darkforest/data/local/go
 ```
+
